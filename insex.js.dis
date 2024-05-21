@@ -1,0 +1,67 @@
+const { SerialPort } = require('serialport');
+
+const port = new SerialPort({
+  path: 'COM15',
+  baudRate: 1200,
+  dataBits: 7,
+  parity: 'even',
+  stopBits: 2,
+});
+
+// Funkce pro převod hexadecimálního řetězce na buffer
+function hexStringToBuffer(hex) {
+  return Buffer.from(hex, 'hex');
+}
+
+
+
+
+function checksum8XOR(hexString) {
+  // Převod hexadecimálního řetězce na pole bajtů
+  let bytes = [];
+  for (let i = 0; i < hexString.length; i += 2) {
+      bytes.push(parseInt(hexString.substr(i, 2), 16));
+  }
+
+  // Inicializace checksum
+  let checksum = 0x00;
+
+  // Provedení XOR přes všechny bajty
+  for (let byte of bytes) {
+      checksum ^= byte;
+  }
+
+  // Převod výsledného checksumu na hexadecimální řetězec
+  return checksum.toString(16).padStart(2, '0').toUpperCase();
+}
+
+// Příklad použití
+let hexString = "7f"+"30492031303A3230"+"0D";
+let checksum = checksum8XOR(hexString);
+
+console.log(checksum);
+
+// Hex kód, který chcete poslat (například 'A1B2C3')
+const hexCode = hexString.substring(2)+checksum;
+console.log(hexCode);
+let buffer = hexStringToBuffer(hexCode);
+
+
+// setInterval(() => {
+  
+// }, 60000);
+
+
+// Poslání dat
+port.write(buffer, (err) => {
+  if (err) {
+    return console.log('Error on write: ', err.message);
+  }
+  console.log('Message written');
+  console.log(buffer);
+});
+
+// Chybová obsluha
+port.on('error', (err) => {
+  console.log('Error: ', err.message);
+});

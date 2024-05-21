@@ -1,0 +1,31 @@
+const { SerialPort } = require('serialport');
+
+const port = new SerialPort({
+  path: 'COM15',
+  baudRate: 1200,
+  dataBits: 7,
+  parity: 'even',
+  stopBits: 2,
+});
+
+// Funkce pro převod hexadecimálního řetězce na buffer
+function hexStringToBuffer(hex) {
+  return Buffer.from(hex, 'hex');
+}
+
+// Hex kód, který chcete poslat (například 'A1B2C3')
+const hexCode = '30492031303A32300D12';
+const buffer = hexStringToBuffer(hexCode);
+console.log(buffer);
+// Poslání dat
+port.write(buffer, (err) => {
+  if (err) {
+    return console.log('Error on write: ', err.message);
+  }
+  console.log('Message written');
+});
+
+// Chybová obsluha
+port.on('error', (err) => {
+  console.log('Error: ', err.message);
+});

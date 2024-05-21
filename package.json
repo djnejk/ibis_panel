@@ -1,0 +1,15 @@
+{
+  "name": "cas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "insex.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@serialport/list": "^12.0.0",
+    "serialport": "^12.0.0"
+  }
+}
